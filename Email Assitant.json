@@ -1,0 +1,241 @@
+{
+  "name": "Demo: My first AI Agent in n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b24b05a7-d802-4413-bfb1-23e1e76f6203",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        32
+      ],
+      "webhookId": "a889d2ae-2159-402f-b326-5f61e90f602e"
+    },
+    {
+      "parameters": {
+        "content": "## Start by saying 'hi'\n![Button](/static/openChat.png)",
+        "height": 149,
+        "width": 150
+      },
+      "id": "5592c045-6718-4c4e-9961-ce67a251b6df",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a personal assistant AI that helps the user draft work related emails\nCore responsibilities:\nUse the context provided by the user to generate clear, professional, and concise emails.\n\nEnsure the tone matches the user's intent (e.g, formal, persuasive, polite, collaborative).\n\nOrganize emails with proper structure, greeting, body, closing, and signature (if provided)\n\nDatabase tools:\nYou have access to tools that provide contact information such as names,job titles, and email addresses.\n\nAlways use this data to personalize and correctly address each recipient.\nIf information is missing, ask the user to clarify before finalizing the draft.\n\nTone: Professional, polished, and aligned with workplace communication standards."
+        }
+      },
+      "id": "41174c8a-6ac8-42bd-900e-ca15196600c5",
+      "name": "Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        592,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        592,
+        272
+      ],
+      "id": "ca9b7a6e-2745-4b42-a508-ba996181e3d9",
+      "name": "Google Gemini Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jxZeXQgj3vkjlrjg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        336
+      ],
+      "id": "f46250d6-1892-4835-a937-55b3f4f4c284",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KEskdieycAwXm3wJDPYzkzl7xcSbNbydp7_YJ-DrDWY",
+          "mode": "list",
+          "cachedResultName": "contacts_n8n_project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KEskdieycAwXm3wJDPYzkzl7xcSbNbydp7_YJ-DrDWY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 66931986,
+          "mode": "list",
+          "cachedResultName": "create  this table",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KEskdieycAwXm3wJDPYzkzl7xcSbNbydp7_YJ-DrDWY/edit#gid=66931986"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        240
+      ],
+      "id": "bb53b4ac-8cc6-4dc3-a412-9d6fd818a4e2",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "78rC0ftmBsDvpCMz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailRecepient\") }}",
+        "subject": "={{ $fromAI(\"Subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        240
+      ],
+      "id": "366fb099-66fd-4512-bc0d-e1aec096544d",
+      "name": "Send a message in Gmail",
+      "webhookId": "cf060eff-6958-4e03-a24d-e9b16740de1b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SlJdINj7xLiqUCsG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "517b106a-28bd-4324-a61d-1e2340cb7f8a",
+              "name": "Output",
+              "value": "={{ $json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        80
+      ],
+      "id": "5cc3e2ad-b84f-4769-bb2a-a683437f0e29",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5eaa8621-8d4c-4c54-9215-c4480a7d7485",
+  "meta": {
+    "templateId": "self-building-ai-agent",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ba0663d61add745b21fdb5953a82c7ca83ea1e0f068c9d59a83bae0f8149cbe8"
+  },
+  "id": "DlAxGzFVR3quRmh5",
+  "tags": []
+}
