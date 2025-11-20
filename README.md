@@ -11,7 +11,7 @@ Below is a list of available workflows in this repository.
 
 ---
 
-### ### **1. Email Assistant (`Email Assistant.json`)**
+### **1. Email Assistant (`Email Assistant.json`)**
 
 A conversational **AI-powered email assistant** that allows you to send emails simply by describing your request in natural language.
 
